@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlackJack
+﻿namespace BlackJack
 {
     internal class CardDeck
     {
         public List<Card> Deck { get; set; }
-        public CardDeck()
+        private int[] _publicCardDeck;
+        public CardDeck(int[] PublicCardDeck)
         {
+            _publicCardDeck = PublicCardDeck;
+
             Deck = new List<Card>();
         }
 
@@ -21,29 +16,49 @@ namespace BlackJack
             Random random = new Random();
             Card newCard = new Card();
 
-            int randomNumber = random.Next(2, 14);
+            int randomNumber = 0;
+            do
+            {
+                randomNumber = random.Next(2, 14);
 
-            if(randomNumber < 11)
+            } while (_publicCardDeck[randomNumber - 2] == 0);
+
+            _publicCardDeck[randomNumber - 2]--;
+
+            if (randomNumber < 11)
             {
                 newCard.Suit = randomNumber.ToString();
                 newCard.Value = randomNumber;
             }
-            else if(randomNumber == 11){
+            else if (randomNumber == 11)
+            {
                 newCard.Suit = "J";
                 newCard.Value = 10;
             }
-            else if(randomNumber == 12)
+            else if (randomNumber == 12)
             {
                 newCard.Suit = "Q";
                 newCard.Value = 10;
             }
-            else if(randomNumber == 13)
+            else if (randomNumber == 13)
             {
                 newCard.Suit = "K";
                 newCard.Value = 10;
             }
 
             Deck.Add(newCard);
+        }
+
+        private bool deckIsEmpty()
+        {
+            foreach (int item in _publicCardDeck)
+            {
+                if (item != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         internal void readCards()

@@ -1,33 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.VisualBasic;
 
 namespace BlackJack
 {
     internal class Game
     {
+        public Game()
+        {
+        }
+
         static void Main(string[] args)
         {
-            CardDeck playerDeck = new CardDeck();
-            CardDeck computerDeck = new CardDeck();
+            int[] globalCardDeck = Enumerable.Repeat(4, 12).ToArray();
+
+            CardDeck playerDeck = new CardDeck(globalCardDeck);
+            CardDeck computerDeck = new CardDeck(globalCardDeck);
 
             playerDeck.addRandomCard();
             playerDeck.addRandomCard();
 
             computerDeck.addRandomCard();
 
-            readDecks(playerDeck, computerDeck);
+            readDecks(playerDeck, computerDeck, globalCardDeck);
 
             Console.WriteLine("Do you want to take another card? (y/n)");
-            while (Console.ReadLine() == "y")
+            while (Console.ReadLine().ToLower() == "y")
             {
-                computerDeck.addRandomCard();
-                readDecks(playerDeck, computerDeck);
+                Console.Clear();
 
-                if(computerDeck.countCards() < 17)
+                if (!isEmpty(globalCardDeck))
+                {
+                    playerDeck.addRandomCard();
+                }
+                else
+                {
+                    Console.WriteLine("There are no more cards in the deck.");
+                    break;
+                }
+
+                if (computerDeck.countCards() < 17)
                 {
                     computerDeck.addRandomCard();
                     Console.WriteLine("Computer takes another card.");
@@ -36,6 +46,8 @@ namespace BlackJack
                 {
                     Console.WriteLine("Computer does not want to take another card.");
                 }
+
+                readDecks(playerDeck, computerDeck, globalCardDeck);
                 Console.WriteLine("Do you want to take another card? (y/n)");
             }
 
@@ -61,13 +73,45 @@ namespace BlackJack
             }
         }
 
-        private static void readDecks(CardDeck playerDeck, CardDeck computerDeck)
+        private static bool isEmpty(int[] globalCardDeck)
         {
+            foreach (int i in globalCardDeck)
+            {
+                if (i != 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static void readDecks(CardDeck playerDeck, CardDeck computerDeck, int[] quantity)
+        {
+            Console.WriteLine("Cards deck: ");
+            Console.WriteLine("2 3 4 5 6 7 8 9 10 J Q K");
+
+            int i = 0;
+            foreach (int item in quantity)
+            {
+                Console.Write($"{item} ");
+                if (i == 8)
+                {
+                    Console.Write(" ");
+                }
+                i++;
+            }
+
             Console.WriteLine();
-            Console.WriteLine("Player´s card: ");
+
+            Console.WriteLine("\nPlayer´s card: ");
             playerDeck.readCards();
+
+            Console.WriteLine();
+
             Console.WriteLine("Computer´s card: ");
             computerDeck.readCards();
+
             Console.WriteLine();
         }
     }
